@@ -1,19 +1,16 @@
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
 import { useNavigate, useLocation, type Location } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { FormProvider } from '@/shared/components/form/FormProvider';
 import { useAuth, loginFormSchema } from '@/features/auth';
 import { getCsrfTokenApi } from '@/features/auth/api/api';
 import type { LoginFormData } from '@/features/auth';
-import { Button } from '@/shared/ui';
+import { Button, Input } from '@/shared/components';
 
 export function LoginForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const loginMutation = useAuth().login;
-
-  const { register, handleSubmit, formState: { errors, isSubmitting }, setError } =
-    useForm<LoginFormData>({ resolver: zodResolver(loginFormSchema) });
 
   // ログイン後のリダイレクト
   useEffect(() => {
@@ -32,42 +29,15 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {/* email */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          メールアドレス
-        </label>
-        <input
-          type="email"
-          {...register("email")}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-        />
-        {errors.email && (
-          <p className="mt-1 text-sm text-red-600">
-            {errors.email.message}
-          </p>
-        )}
-      </div>
+    <FormProvider<LoginFormData>
+      formOptions={{ resolver: zodResolver(loginFormSchema) }}
+      onSubmit={onSubmit}
+      className="space-y-4"
+    >
+      <Input label="メールアドレス" name="email" type="email" placeholder='test@test.com' />
+      <Input label="パスワード" name="password" type="password" />
 
-      {/* password */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          パスワード
-        </label>
-        <input
-          type="password"
-          {...register("password")}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-        />
-        {errors.password && (
-          <p className="mt-1 text-sm text-red-600">
-            {errors.password.message}
-          </p>
-        )}
-      </div>
-
-      <Button>デフォルト（primary）</Button>
+      <Button type="submit">ログイン</Button>
       <Button variant="secondary">キャンセル</Button>
       <Button variant="danger">削除</Button>
       <Button variant="outline">下書き保存</Button>
@@ -76,7 +46,6 @@ export function LoginForm() {
 
       <Button size="sm">小さい</Button>
       <Button size="lg">大きい</Button>
-    </form>
-
+    </FormProvider>
   );
 }
