@@ -1,7 +1,10 @@
-export { Button } from "@/shared/components/button/Button";
-export { Checkbox } from "@/shared/components/input/Checkbox";
-export { Input } from "@/shared/components/input/Input";
-export { Radio } from "@/shared/components/input/Radio";
-export { Select } from "@/shared/components/input/Select";
-export { Switch } from "@/shared/components/input/Switch";
-export { Textarea } from "@/shared/components/input/Textarea";
+export { Button } from "@/shared/components/buttons/Button";
+export { SubmitButton } from "@/shared/components/buttons/SubmitButton";
+export { Checkbox } from "@/shared/components/inputs/Checkbox";
+export { Input } from "@/shared/components/inputs/Input";
+export { Radio } from "@/shared/components/inputs/Radio";
+export { RadioGroup } from "@/shared/components/inputs/RadioGroup";
+export { Select } from "@/shared/components/inputs/Select";
+export { Switch } from "@/shared/components/inputs/Switch";
+export { Textarea } from "@/shared/components/inputs/Textarea";
+export { Spinner } from "@/shared/components/Spinner";

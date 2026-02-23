@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation, type Location } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormProvider } from '@/shared/components/form/FormProvider';
+import { FormProvider } from '@/shared/components/forms/FormProvider';
 import { useAuth, loginFormSchema } from '@/features/auth';
 import { getCsrfTokenApi } from '@/features/auth/api/api';
 import type { LoginFormData } from '@/features/auth';
-import { Button, Input } from '@/shared/components';
+import { SubmitButton, Input, RadioGroup } from '@/shared/components';
 
 export function LoginForm() {
   const navigate = useNavigate();
@@ -24,28 +24,36 @@ export function LoginForm() {
     // CSRF トークン取得
     await getCsrfTokenApi();
 
-    // ログイン
+    // ログイン実行
     await loginMutation.mutateAsync(data);
   };
 
   return (
     <FormProvider<LoginFormData>
-      formOptions={{ resolver: zodResolver(loginFormSchema) }}
+      formOptions={{
+        resolver: zodResolver(loginFormSchema),
+        defaultValues: {
+          email: 'test@test.com',
+          password: 'Password@1',
+        },
+      }}
       onSubmit={onSubmit}
-      className="space-y-4"
+      className="space-y-4 max-w-md mx-auto"
     >
-      <Input label="メールアドレス" name="email" type="email" placeholder='test@test.com' />
-      <Input label="パスワード" name="password" type="password" />
-
-      <Button type="submit">ログイン</Button>
-      <Button variant="secondary">キャンセル</Button>
-      <Button variant="danger">削除</Button>
-      <Button variant="outline">下書き保存</Button>
-      <Button variant="ghost">閉じる</Button>
-      <Button variant="link">詳細を見る</Button>
-
-      <Button size="sm">小さい</Button>
-      <Button size="lg">大きい</Button>
+      <Input label="メールアドレス" name="email" type="email" placeholder="test@test.com" />
+      <Input label="パスワード" name="password" type="password" placeholder="Password@1" />
+      <SubmitButton className="w-full">ログイン</SubmitButton>
+      <RadioGroup
+        name="test"
+        label="ラジオグループ"
+        options={[
+          { label: "選択1", value: "value1" },
+          { label: "選択2", value: "value2" },
+          { label: "選択3", value: "value3" },
+        ]}
+        className="flex-row"
+      >
+      </RadioGroup>
     </FormProvider>
   );
 }
