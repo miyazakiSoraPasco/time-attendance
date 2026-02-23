@@ -8,3 +8,4 @@ export { Select } from "@/shared/components/inputs/Select";
 export { Switch } from "@/shared/components/inputs/Switch";
 export { Textarea } from "@/shared/components/inputs/Textarea";
 export { Spinner } from "@/shared/components/Spinner";
+export { Error } from "@/shared/components/errors/Error";

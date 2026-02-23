@@ -1,6 +1,7 @@
 import { type TextareaHTMLAttributes } from 'react';
 import { useFormContext, type FieldPath, type FieldError, type FieldValues } from 'react-hook-form';
 import { cn } from '@/shared/utils/style';
+import { Error } from '@/shared/components';
 
 type TextareaProps<T extends FieldValues> = TextareaHTMLAttributes<HTMLTextAreaElement> & {
     name: FieldPath<T>;
@@ -26,7 +27,7 @@ export const Textarea = <T extends FieldValues>({
                     fieldError ? "border-red-500" : "border-gray-300"
                 )}
             />
-            {fieldError && <p className="text-red-500 text-sm">{fieldError.message}</p>}
+            {fieldError && <Error error={fieldError}></Error>}
         </div>
     );
 };

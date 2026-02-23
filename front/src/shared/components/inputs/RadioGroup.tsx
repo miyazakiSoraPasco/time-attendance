@@ -1,6 +1,6 @@
-import { useFormContext, type FieldValues } from "react-hook-form";
+import { useFormContext, type FieldError, type FieldValues } from "react-hook-form";
 import { cn } from "@/shared/utils/style";
-import { Radio } from "./Radio";
+import { Radio, Error } from '@/shared/components';
 
 type RadioOption = {
     label: string;
@@ -21,7 +21,7 @@ export const RadioGroup = <T extends FieldValues>({
     label,
 }: RadioGroupProps<T>) => {
     const { formState: { errors } } = useFormContext<T>();
-    const fieldError = errors[name];
+    const fieldError = errors[name] as FieldError | undefined;
 
     return (
         <div className={cn("flex flex-col gap-1", className)}>
@@ -37,10 +37,7 @@ export const RadioGroup = <T extends FieldValues>({
                     />
                 ))}
             </div>
-
-            {fieldError && (
-                <p className="text-red-500 text-xs mt-1">{(fieldError as any)?.message}</p>
-            )}
+            {fieldError && <Error error={fieldError}></Error>}
         </div>
     );
 };
