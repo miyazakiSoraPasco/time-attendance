@@ -33,7 +33,7 @@ return new class extends Migration
                 ->unique('email')
                 ->whereNull('deleted_at'); // メールアドレス（ユニーク制約、論理削除は除外）
             $table->string('password'); // パスワード
-            $table->string('status', 20)->default('active'); // 状態
+            $table->string('status', 20)->default('active'); // 状態（例: active, inactive）
 
             // ログイン情報
             $table->timestampTz('email_verified_at')->nullable(); // メールアドレス確認日時

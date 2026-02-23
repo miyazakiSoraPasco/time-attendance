@@ -13,7 +13,7 @@ return new class extends Migration
         Schema::create('overtime_requests', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            // ユーザーに紐づけ
+            // ユーザーID（外部キー）
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
 
             // 申請日・残業時間
