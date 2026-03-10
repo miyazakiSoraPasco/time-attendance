@@ -7,17 +7,30 @@ info:
     name: MIT
     url: https://opensource.org/licenses/MIT
 servers:
-  - url: http://localhost/api
-  - url: https://api.example.com/api
+  - url: '{scheme}://{host}/api'
+    description: API Server
+    variables:
+      scheme:
+        default: http
+        enum:
+          - http
+          - https
+      host:
+        default: localhost:8000
+        enum:
+          - localhost:8000
+          - api.example.com
 security:
   - BearerAuth: []
 tags:
   - name: Attendance
+    description: 勤怠打刻・勤怠取得に関するAPI
   - name: Auth
+    description: 認証・JWTトークン管理API
 paths:
   /login:
     post:
-      operationId: loginPost
+      operationId: loginApi
       tags:
         - Auth
       summary: ログイン
@@ -42,6 +55,7 @@ paths:
           $ref: '#/components/responses/ServerError'
   /attendances/today:
     get:
+      operationId: todayApi
       tags:
         - Attendance
       summary: 今日の勤怠取得
@@ -58,6 +72,7 @@ paths:
           $ref: '#/components/responses/ServerError'
   /attendances/clock-in:
     post:
+      operationId: clockInApi
       tags:
         - Attendance
       summary: 出勤打刻
@@ -78,6 +93,7 @@ paths:
           $ref: '#/components/responses/ServerError'
   /attendances/clock-out:
     post:
+      operationId: clockOutApi
       tags:
         - Attendance
       summary: 退勤打刻

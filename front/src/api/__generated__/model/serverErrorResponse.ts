@@ -5,5 +5,9 @@
  * 勤怠管理API（JWT認証）
  * OpenAPI spec version: 1.0.0
  */
+import type { ErrorResponse } from "./errorResponse";
 
-export type ValidationErrorResponseErrors = {[key: string]: string[]};
+/**
+ * サーバーエラー
+ */
+export type ServerErrorResponse = ErrorResponse;

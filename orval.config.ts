@@ -1,20 +1,24 @@
-import { defineConfig } from 'orval';
+// front/orval.config.ts
+import { defineConfig } from 'orval'
 
 export default defineConfig({
     api: {
-        input: './openapi/dist.yaml',
+        input: './openapi/build/bundle.yaml',
         output: {
-            mode: 'tags-split',
-            target: './front/src/api/generated/index.ts',
-            schemas: './front/src/api/model',
-            client: 'react-query',
+            mode: 'tags-split', // タグごとにファイル分割
+            target: './front/src/api/__generated__/index.ts', // 生成先
+            schemas: './front/src/api/__generated__/model', // Zod 型出力先
+            client: 'react-query', // React Query クライアント生成
             tsconfig: './front/tsconfig.json',
             override: {
                 mutator: {
-                    path: './front/src/api/client.ts',
-                    name: 'customInstance',
+                    path: './front/src/api/client.ts', // Axios instance などを定義したファイル
+                    name: 'customInstance', // mutator で使う関数名
                 },
             },
         },
+        hooks: {
+            afterAllFilesWrite: ['prettier --write'], // prettier 自動整形
+        },
     },
-});
+})

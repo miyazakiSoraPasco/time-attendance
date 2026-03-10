@@ -1,6 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { authMeApi, loginApi, logoutApi, useAuthStore } from "@/features/auth";
+import { authMeApi, loginApi, logoutApi } from "@/api/generated/auth/auth"; // Orval生成
+import { useAuthStore } from "@/features/auth"; // Zustand store
+import { AuthMeSchema } from "@/api/generated/zodSchemas"; // Zodスキーマ
 
+// React Queryキー管理
 export const authQueryKey = {
     all: ["auth"] as const,
     me: () => [...authQueryKey.all, "me"] as const,
@@ -12,13 +15,17 @@ export const useAuth = () => {
     // 認証ユーザー取得
     const authQuery = useQuery({
         queryKey: authQueryKey.me(),
-        queryFn: authMeApi,
+        queryFn: async () => {
+            const data = await authMeApi();
+            // Zodで型チェック
+            return AuthMeSchema.parse(data);
+        },
         retry: false,
         staleTime: 1000 * 60 * 5,
         refetchOnWindowFocus: false,
         onSuccess: (user) => {
             useAuthStore.getState().setUser(user);
-            useAuthStore.getState().setIsAuthenticated(!!user);
+            useAuthStore.getState().setIsAuthenticated(true);
             useAuthStore.getState().setIsInitializing(false);
         },
         onError: () => {
@@ -30,8 +37,12 @@ export const useAuth = () => {
 
     // ログイン
     const login = useMutation({
-        mutationFn: loginApi,
+        mutationFn: async (credentials: { email: string; password: string }) => {
+            const data = await loginApi({ body: credentials });
+            return data;
+        },
         onSuccess: async () => {
+            // ログイン成功後は認証情報を再フェッチ
             await queryClient.invalidateQueries({ queryKey: authQueryKey.me() });
         },
     });

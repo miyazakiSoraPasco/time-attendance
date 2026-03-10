@@ -1,6 +1,6 @@
 login:
   post:
-    operationId: loginPost
+    operationId: loginApi
     tags:
       - Auth
     summary: ログイン
@@ -21,5 +21,51 @@ login:
         $ref: '../components/responses.yaml#/Unauthorized'
       '422':
         $ref: '../components/responses.yaml#/ValidationError'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+logout:
+  post:
+    operationId: logoutApi
+    tags:
+      - Auth
+    summary: ログアウト
+    requestBody:
+      required: false
+      content:
+        application/json:
+          schema:
+            type: object
+            description: ログアウトに必要なデータなし（JWTヘッダ必須）
+    responses:
+      '200':
+        description: ログアウト成功
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Logged out successfully"
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '500':
+        $ref: '../components/responses.yaml#/ServerError'
+
+authMe:
+  get:
+    operationId: authMeApi
+    tags:
+      - Auth
+    summary: ログイン中ユーザー情報取得
+    responses:
+      '200':
+        description: 認証済みユーザー情報
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/index.yaml#/UserResponse'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
       '500':
         $ref: '../components/responses.yaml#/ServerError'

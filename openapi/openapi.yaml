@@ -9,12 +9,26 @@ info:
     url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: http://localhost/api
-  - url: https://api.example.com/api
+  - url: "{scheme}://{host}/api"
+    description: API Server
+    variables:
+      scheme:
+        default: http
+        enum:
+          - http
+          - https
+      host:
+        default: localhost:8000
+        enum:
+          - localhost:8000
+          - api.example.com
 
 tags:
   - name: Attendance
+    description: 勤怠打刻・勤怠取得に関するAPI
+
   - name: Auth
+    description: 認証・JWTトークン管理API
 
 paths:
   /login:

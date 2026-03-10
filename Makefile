@@ -4,6 +4,8 @@
 BACK_DIR=back
 FRONT_DIR=front
 BACK_CONTAINER=app
+OPENAPI_DIR=openapi
+BUNDLE=$(OPENAPI_DIR)/build/bundle.yaml
 
 # Docker Compose 環境指定
 ENV ?= dev
@@ -71,16 +73,40 @@ test-front:
 lint-front:
 	npm run lint --prefix $(FRONT_DIR)
 
+# ----------------------------
+# OpenAPI lint
+# ----------------------------
 openapi-lint:
-	npx --prefix $(FRONT_DIR) @redocly/cli lint openapi/openapi.yaml
+	npx --prefix $(FRONT_DIR) @redocly/cli lint $(OPENAPI_DIR)/openapi.yaml
 
+# ----------------------------
+# OpenAPI bundle
+# ----------------------------
 openapi-bundle:
-	npx --prefix $(FRONT_DIR) @redocly/cli bundle openapi/openapi.yaml -o openapi/build/bundle.yaml
+	npx --prefix $(FRONT_DIR) @redocly/cli bundle $(OPENAPI_DIR)/openapi.yaml -o $(BUNDLE)
 
-openapi-gen: openapi-bundle
-	npx --prefix $(FRONT_DIR) orval --config $(FRONT_DIR)/orval.config.ts
+# ----------------------------
+# Orval client generation
+# ----------------------------
+openapi-orval: openapi-bundle
+	npx --prefix $(FRONT_DIR) orval --config orval.config.ts
 
-openapi-build: openapi-lint openapi-gen
+# zod
+openapi-zod: openapi-bundle
+	npx --prefix $(FRONT_DIR) openapi-zod-client \
+	$(BUNDLE) \
+	-o $(FRONT_DIR)/src/api/__generated__/zod.ts
+
+# ----------------------------
+# format
+# ----------------------------
+openapi-format:
+	npx --prefix $(FRONT_DIR) prettier --write $(FRONT_DIR)/src/api/__generated__
+
+# ----------------------------
+# full generation
+# ----------------------------
+openapi-gen: openapi-orval openapi-zod openapi-format
 
 # --------------------------------
 # 共通

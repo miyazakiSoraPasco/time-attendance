@@ -1,5 +1,6 @@
 today:
   get:
+    operationId: todayApi
     tags:
       - Attendance
     summary: 今日の勤怠取得
@@ -17,6 +18,7 @@ today:
 
 clockIn:
   post:
+    operationId: clockInApi
     tags:
       - Attendance
     summary: 出勤打刻
@@ -38,6 +40,7 @@ clockIn:
 
 clockOut:
   post:
+    operationId: clockOutApi
     tags:
       - Attendance
     summary: 退勤打刻
