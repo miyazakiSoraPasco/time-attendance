@@ -33,6 +33,10 @@ tags:
 paths:
   /login:
     $ref: './paths/auth.yaml#/login'
+  /logout:
+    $ref: './paths/auth.yaml#/logout'
+  /authme:
+    $ref: './paths/auth.yaml#/authMe'
   /attendances/today:
     $ref: './paths/attendance.yaml#/today'
   /attendances/clock-in:

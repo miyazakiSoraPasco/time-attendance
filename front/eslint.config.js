@@ -6,7 +6,11 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores([
+    'dist',
+    'src/api/__generated__'
+  ]),
+
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -18,6 +22,14 @@ export default defineConfig([
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+    },
+  },
+
+  // generated code 用
+  {
+    files: ['src/api/__generated__/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-namespace': 'off',
     },
   },
 ])

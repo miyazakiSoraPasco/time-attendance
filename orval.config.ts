@@ -1,4 +1,3 @@
-// front/orval.config.ts
 import { defineConfig } from 'orval'
 
 export default defineConfig({
@@ -19,6 +18,6 @@ export default defineConfig({
         },
         hooks: {
             afterAllFilesWrite: ['prettier --write'], // prettier 自動整形
-        },
+        }
     },
 })

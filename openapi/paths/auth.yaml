@@ -23,6 +23,7 @@ login:
         $ref: '../components/responses.yaml#/ValidationError'
       '500':
         $ref: '../components/responses.yaml#/ServerError'
+        
 logout:
   post:
     operationId: logoutApi

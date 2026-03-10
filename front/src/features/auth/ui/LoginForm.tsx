@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider } from '@/shared/components/forms/FormProvider';
 import { useAuth } from '@/features/auth';
 import { getCsrfToken } from '@/api/client';
-import type { LoginFormData } from '@/features/auth';
+import { type LoginFormData, loginFormSchema } from '@/features/auth';
 import { SubmitButton, Input, RadioGroup, Select, Switch } from '@/shared/components';
 
 export function LoginForm() {

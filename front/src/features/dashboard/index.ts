@@ -14,7 +14,7 @@ export type {
   AuthMeResponse,
   LogoutResponse,
   RegisterRequest,
-} from '@/features/auth/model/types';
+} from '@/features/dashboard/model/types';
 export {
   loginApi,
   logoutApi,

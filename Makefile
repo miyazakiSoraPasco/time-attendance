@@ -73,40 +73,20 @@ test-front:
 lint-front:
 	npm run lint --prefix $(FRONT_DIR)
 
-# ----------------------------
-# OpenAPI lint
-# ----------------------------
-openapi-lint:
-	npx --prefix $(FRONT_DIR) @redocly/cli lint $(OPENAPI_DIR)/openapi.yaml
-
-# ----------------------------
-# OpenAPI bundle
-# ----------------------------
 openapi-bundle:
-	npx --prefix $(FRONT_DIR) @redocly/cli bundle $(OPENAPI_DIR)/openapi.yaml -o $(BUNDLE)
+	npx @redocly/cli bundle \
+	$(OPENAPI_DIR)/openapi.yaml \
+	-o $(BUNDLE)
 
-# ----------------------------
-# Orval client generation
-# ----------------------------
-openapi-orval: openapi-bundle
-	npx --prefix $(FRONT_DIR) orval --config orval.config.ts
+openapi-client: openapi-bundle
+	npx --prefix $(FRONT_DIR) orval
 
-# zod
 openapi-zod: openapi-bundle
-	npx --prefix $(FRONT_DIR) openapi-zod-client \
+	npx --prefix $(FRONT_DIR) openapi-zod \
 	$(BUNDLE) \
 	-o $(FRONT_DIR)/src/api/__generated__/zod.ts
 
-# ----------------------------
-# format
-# ----------------------------
-openapi-format:
-	npx --prefix $(FRONT_DIR) prettier --write $(FRONT_DIR)/src/api/__generated__
-
-# ----------------------------
-# full generation
-# ----------------------------
-openapi-gen: openapi-orval openapi-zod openapi-format
+openapi: openapi-client openapi-zod
 
 # --------------------------------
 # 共通

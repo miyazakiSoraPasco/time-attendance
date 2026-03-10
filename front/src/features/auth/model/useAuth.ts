@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { authMeApi, loginApi, logoutApi } from "@/api/generated/auth/auth"; // Orval生成
+import { authMeApi, loginApi, logoutApi } from "@/api/__generated__/auth/auth"; // Orval生成
 import { useAuthStore } from "@/features/auth"; // Zustand store
-import { AuthMeSchema } from "@/api/generated/zodSchemas"; // Zodスキーマ
+import { AuthMeSchema } from "@/api/__generated__/zod"; // Zodスキーマ
 
 // React Queryキー管理
 export const authQueryKey = {
