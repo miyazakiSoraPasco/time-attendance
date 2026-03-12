@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components";
 import { IconWrapper } from "@/shared/components/icons/IconWrapper";
 import type { LucideIcon } from "lucide-react";
 

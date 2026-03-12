@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LoginForm } from '@/features/auth/ui/LoginForm';
 import { useAuthStore } from '@/features/auth';
-import { Card } from "@/shared/components/Card";
+import { Card } from "@/shared/components";
 import { Container } from "@/shared/components/Container";
 import { Typography } from "@/shared/components/Typography";
 

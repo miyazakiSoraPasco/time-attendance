@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { React } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/shared/utils/style";
 import { Button } from "@/shared/components";
@@ -8,7 +9,8 @@ import type { SidebarMenuItem, UserInfo } from "@/shared/components/sidebar/type
 type SidebarProps = {
     menuItems: SidebarMenuItem[];
     user: UserInfo;
-    defaultCollapsed?: boolean;
+    isCollapsed?: boolean;
+    onToggle?: (collapsed: boolean) => void;
     onLogout?: () => void;
     onProfileClick?: () => void;
 };
@@ -17,28 +19,25 @@ function SidebarItem({
     item,
     isActive,
     collapsed,
-    onClick,
 }: {
     item: SidebarMenuItem;
     isActive: boolean;
     collapsed: boolean;
-    onClick: () => void;
 }) {
     const Icon = item.icon;
     return (
         <li>
-            <a
-                href={item.href}
-                onClick={onClick}
+            <Link
+                to={item.href}
                 title={collapsed ? item.label : undefined}
                 className={cn(
                     "flex items-center gap-3 px-3 py-3 rounded-lg transition-colors",
-                    isActive ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                    isActive ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20" : "text-gray-400 hover:bg-gray-800 hover:text-white"
                 )}
             >
                 <Icon size={20} />
-                {!collapsed && <span>{item.label}</span>}
-            </a>
+                {!collapsed && <span className="font-medium text-sm">{item.label}</span>}
+            </Link>
         </li>
     );
 }
@@ -46,43 +45,47 @@ function SidebarItem({
 export default function Sidebar({
     menuItems,
     user,
-    defaultCollapsed = false,
+    isCollapsed = false,
+    onToggle,
     onLogout,
     onProfileClick,
 }: SidebarProps) {
-    const [collapsed, setCollapsed] = useState(defaultCollapsed);
-    const [activeItem, setActiveItem] = useState(menuItems[0]?.label || "");
+    const collapsed = isCollapsed;
+    const location = useLocation();
+
+    const handleToggle = () => {
+        onToggle?.(!collapsed);
+    };
 
     return (
         <aside
             className={cn(
                 "fixed left-0 top-0 h-screen bg-gray-900 text-white flex flex-col transition-all duration-300 z-40",
-                collapsed ? "w-16" : "w-64"
+                collapsed ? "w-20" : "w-64"
             )}
         >
             {/* Header */}
-            <div className="h-16 flex items-center justify-between px-4 border-b border-gray-800">
-                {!collapsed && <span className="text-xl font-bold">勤怠管理</span>}
+            <div className="h-20 flex items-center justify-between px-6 border-b border-gray-800">
+                {!collapsed && <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">勤怠管理</span>}
                 <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => setCollapsed(!collapsed)}
-                    className="text-gray-400 hover:text-white hover:bg-gray-800 ml-auto"
+                    onClick={handleToggle}
+                    className="text-gray-500 hover:text-white hover:bg-gray-800 ml-auto rounded-xl"
                 >
                     {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
                 </Button>
             </div>
 
             {/* Menu */}
-            <nav className="flex-1 py-6 px-2 overflow-y-auto">
+            <nav className="flex-1 py-8 px-4 overflow-y-auto">
                 <ul className="space-y-2">
                     {menuItems.map((item) => (
                         <SidebarItem
                             key={item.label}
                             item={item}
                             collapsed={collapsed}
-                            isActive={activeItem === item.label}
-                            onClick={() => setActiveItem(item.label)}
+                            isActive={location.pathname === item.href}
                         />
                     ))}
                 </ul>

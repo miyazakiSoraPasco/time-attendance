@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components";
 import { Button } from "@/shared/components/buttons/Button";
 import { FileText, Plane, Stethoscope, FileEdit } from "lucide-react";
 

@@ -4,55 +4,99 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\AttendanceStatus;
-use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Attendance extends Model
 {
-    use HasUuid;
     use SoftDeletes;
 
+    protected $table = 'attendances';
+
+    /**
+     * UUID primary key
+     */
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    /**
+     * Mass assignment
+     */
     protected $fillable = [
         'user_id',
         'work_date',
-        'status',
-        'total_work_minutes',
-        'total_break_minutes',
+        'start_time',
+        'end_time',
     ];
 
+    /**
+     * Casts
+     */
     protected $casts = [
         'work_date' => 'date',
-        'status' => AttendanceStatus::class,
-        'total_work_minutes' => 'integer',
-        'total_break_minutes' => 'integer',
+        'start_time' => 'datetime:H:i:s',
+        'end_time' => 'datetime:H:i:s',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
-    public function user(): BelongsTo
+    /**
+     * User relation
+     */
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Scopes
-    |--------------------------------------------------------------------------
-    */
-
-    public function scopeByUser($query, string $userId)
+    /**
+     * Scope: 特定ユーザー
+     */
+    public function scopeUser(Builder $query, string $userId): Builder
     {
         return $query->where('user_id', $userId);
     }
 
-    public function scopeByDate($query, \DateTimeInterface $date)
+    /**
+     * Scope: 特定日
+     */
+    public function scopeWorkDate(Builder $query, string $date): Builder
     {
         return $query->whereDate('work_date', $date);
     }
 
-    public function scopeByDateRange($query, \DateTimeInterface $startDate, \DateTimeInterface $endDate)
+    /**
+     * Scope: 月検索
+     */
+    public function scopeMonth(Builder $query, int $year, int $month): Builder
     {
-        return $query->whereBetween('work_date', [$startDate, $endDate]);
+        return $query
+            ->whereYear('work_date', $year)
+            ->whereMonth('work_date', $month);
+    }
+
+    /**
+     * 出勤済み判定
+     */
+    public function isClockedIn(): bool
+    {
+        return $this->start_time !== null;
+    }
+
+    /**
+     * 退勤済み判定
+     */
+    public function isClockedOut(): bool
+    {
+        return $this->end_time !== null;
+    }
+
+    /**
+     * 勤務中判定
+     */
+    public function isWorking(): bool
+    {
+        return $this->start_time !== null && $this->end_time === null;
     }
 }

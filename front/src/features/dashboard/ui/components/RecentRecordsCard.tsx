@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components";
 import { History, Clock, AlertCircle } from "lucide-react";
 import { useRecentRecords } from "@/features/dashboard/model/useDashboard";
 import { Spinner } from "@/shared/components/Spinner";
@@ -59,13 +59,12 @@ export const RecentRecordsCard = React.memo(function RecentRecordsCard() {
                     </td>
                     <td className="py-3 px-2">
                       <span
-                        className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
-                          record.status === "通常"
+                        className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${record.status === "通常"
                             ? "bg-green-100/80 text-green-700"
                             : record.status === "残業"
-                            ? "bg-orange-100/80 text-orange-700"
-                            : "bg-gray-100 text-gray-600"
-                        }`}
+                              ? "bg-orange-100/80 text-orange-700"
+                              : "bg-gray-100 text-gray-600"
+                          }`}
                       >
                         {record.status}
                       </span>

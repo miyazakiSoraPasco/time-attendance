@@ -4,14 +4,22 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 
 class LoginHistory extends Model
 {
-    use HasUuid;
+    protected $table = 'login_histories';
 
+    /**
+     * UUID primary key
+     */
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    /**
+     * Mass assignment
+     */
     protected $fillable = [
         'user_id',
         'ip_address',
@@ -20,35 +28,53 @@ class LoginHistory extends Model
         'logged_out_at',
     ];
 
+    /**
+     * Casts
+     */
     protected $casts = [
         'logged_in_at' => 'datetime',
         'logged_out_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
-    public function user(): BelongsTo
+    /**
+     * User relation
+     */
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Scopes
-    |--------------------------------------------------------------------------
-    */
-
-    public function scopeByUser($query, string $userId)
+    /**
+     * Scope: 特定ユーザー
+     */
+    public function scopeUser(Builder $query, string $userId): Builder
     {
         return $query->where('user_id', $userId);
     }
 
-    public function scopeRecent($query)
+    /**
+     * Scope: ログイン中
+     */
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->whereNull('logged_out_at');
+    }
+
+    /**
+     * Scope: 新しい順
+     */
+    public function scopeLatestLogin(Builder $query): Builder
     {
         return $query->orderByDesc('logged_in_at');
     }
 
-    public function scopeActive($query)
+    /**
+     * ログイン中か判定
+     */
+    public function isActive(): bool
     {
-        return $query->whereNull('logged_out_at');
+        return $this->logged_out_at === null;
     }
 }
-

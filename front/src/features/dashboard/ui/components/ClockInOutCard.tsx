@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components";
 import { Clock } from "lucide-react";
 import { useClockInOut } from "@/features/dashboard/model/useDashboard";
-import { Badge } from "@/shared/components/data-display/Badge";
+import { Badge } from "@/shared/components/data_display/Badge";
 import { ClockDisplay } from "./clock/ClockDisplay";
 import { ClockActionButtons } from "./clock/ClockActionButtons";
 import type { ClockStatus, ClockAction } from "./clock/ClockActionButtons";

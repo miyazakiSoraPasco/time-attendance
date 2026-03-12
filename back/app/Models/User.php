@@ -4,22 +4,33 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\UserStatus;
-use App\Models\Traits\HasUuid;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Model
 {
-    use HasUuid;
     use SoftDeletes;
 
+    protected $table = 'users';
+
+    /**
+     * UUID primary key
+     */
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    /**
+     * Mass assignment
+     */
     protected $fillable = [
+        'id',
         'department_id',
+        'role_id',
         'name',
+        'sort_order',
         'email',
         'password',
         'status',
@@ -27,66 +38,88 @@ class User extends Authenticatable implements JWTSubject
         'last_login_at',
     ];
 
+    /**
+     * Hidden attributes
+     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
+    /**
+     * Casts
+     */
     protected $casts = [
-        'status' => UserStatus::class,
+        'sort_order' => 'integer',
+        'status' => 'boolean',
         'email_verified_at' => 'datetime',
         'last_login_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
+    /**
+     * UUID自動生成
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
 
-    public function department(): BelongsTo
+            if (!$user->id) {
+                $user->id = (string) Str::uuid();
+            }
+
+            if ($user->password) {
+                $user->password = Hash::make($user->password);
+            }
+        });
+
+        static::updating(function (User $user) {
+
+            if ($user->isDirty('password')) {
+                $user->password = Hash::make($user->password);
+            }
+        });
+    }
+
+    /**
+     * 部署
+     */
+    public function department()
     {
         return $this->belongsTo(Department::class);
     }
 
-    public function attendances(): HasMany
+    /**
+     * 役職
+     */
+    public function role()
     {
-        return $this->hasMany(Attendance::class);
+        return $this->belongsTo(Role::class);
     }
 
-    public function loginHistories(): HasMany
+    /**
+     * 有効ユーザー
+     */
+    public function scopeActive(Builder $query): Builder
     {
-        return $this->hasMany(LoginHistory::class);
+        return $query->where('status', 1);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Scopes
-    |--------------------------------------------------------------------------
-    */
-
-    public function scopeActive($query)
+    /**
+     * 並び順
+     */
+    public function scopeOrdered(Builder $query): Builder
     {
-        return $query->where('status', UserStatus::ACTIVE);
+        return $query->orderBy('sort_order');
     }
 
-    public function scopeInactive($query)
+    /**
+     * メール検索
+     */
+    public function scopeEmail(Builder $query, string $email): Builder
     {
-        return $query->where('status', UserStatus::INACTIVE);
-    }
-
-    public function scopeByDepartment($query, string $departmentId)
-    {
-        return $query->where('department_id', $departmentId);
-    }
-
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-
-    public function getJWTCustomClaims()
-    {
-        return [];
+        return $query->where('email', $email);
     }
 }
